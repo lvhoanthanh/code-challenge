@@ -29,4 +29,45 @@ export class ItemModel {
   remove(item: Item) {
     return this.repo.remove(item);
   }
+
+  async getPaginatedAndFiltered({
+    name,
+    minPrice,
+    maxPrice,
+    orderBy = "name",
+    order = "DESC",
+    page = 1,
+    pageSize = 10,
+  }: {
+    name?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    orderBy?: string;
+    order?: "ASC" | "DESC";
+    page?: number;
+    pageSize?: number;
+  }) {
+    const qb = this.repo.createQueryBuilder("item");
+
+    if (name) {
+      qb.andWhere("item.name ILIKE :name", { name: `%${name}%` });
+    }
+    if (minPrice !== undefined) {
+      qb.andWhere("item.price >= :minPrice", { minPrice });
+    }
+    if (maxPrice !== undefined) {
+      qb.andWhere("item.price <= :maxPrice", { maxPrice });
+    }
+    qb.orderBy(`item.${orderBy}`, order);
+    qb.skip((page - 1) * pageSize).take(pageSize);
+
+    const [items, total] = await qb.getManyAndCount();
+    return {
+      items,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  }
 }
