@@ -10,6 +10,7 @@ import {
   Row,
   Col,
   Spin,
+  Flex,
 } from "antd";
 
 const { Title } = Typography;
@@ -66,8 +67,8 @@ const SwapForm: React.FC = () => {
         layout="vertical"
         onValuesChange={handleValuesChange}
         onFinish={handleSubmit}
+        style={{ width: "100%" }}
       >
-        {/* From & To selectors on top */}
         <Row gutter={12}>
           <Col span={12}>
             <Form.Item
@@ -78,17 +79,19 @@ const SwapForm: React.FC = () => {
               <Select showSearch placeholder="Select token">
                 {tokens.map((token) => (
                   <Option key={token.currency} value={token.price}>
-                    <img
-                      src={`https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${token.currency}.svg`}
-                      alt={token.currency}
-                      width={20}
-                      style={{ marginRight: 8 }}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display =
-                          "none";
-                      }}
-                    />
-                    {token.currency}
+                    <span style={{ display: "flex", alignItems: "center" }}>
+                      <img
+                        src={`https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${token.currency}.svg`}
+                        alt={token.currency}
+                        width={20}
+                        style={{ marginRight: 8 }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display =
+                            "none";
+                        }}
+                      />
+                      {token.currency}
+                    </span>
                   </Option>
                 ))}
               </Select>
@@ -104,17 +107,19 @@ const SwapForm: React.FC = () => {
               <Select showSearch placeholder="Select token">
                 {tokens.map((token) => (
                   <Option key={token.currency} value={token.price}>
-                    <img
-                      src={`https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${token.currency}.svg`}
-                      alt={token.currency}
-                      width={20}
-                      style={{ marginRight: 8 }}
-                      onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).style.display =
-                          "none";
-                      }}
-                    />
-                    {token.currency}
+                    <span style={{ display: "flex", alignItems: "center" }}>
+                      <img
+                        src={`https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/${token.currency}.svg`}
+                        alt={token.currency}
+                        width={20}
+                        style={{ marginRight: 8 }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display =
+                            "none";
+                        }}
+                      />
+                      {token.currency}
+                    </span>
                   </Option>
                 ))}
               </Select>
@@ -122,7 +127,6 @@ const SwapForm: React.FC = () => {
           </Col>
         </Row>
 
-        {/* Amount inputs below */}
         <Form.Item
           label="Amount to send"
           name="amount"
@@ -145,21 +149,33 @@ const SwapForm: React.FC = () => {
   };
 
   return (
-    <Card className="max-w-lg mx-auto mt-8 shadow-md rounded-2xl">
-      <Title level={4}>Swap</Title>
-      {loading ? (
-        <Row
-          justify="center"
-          align="middle"
-          style={{ height: 200 }}
-        >
-          <Col>
-            <Spin size="large" />
-          </Col>
-        </Row>
-      ) : (
-        _renderFormSwap()
-      )}
+    <Card
+      style={{
+        maxWidth: 420,
+        margin: "32px auto",
+        padding: "24px 16px",
+        borderRadius: 16,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      }}
+    >
+      <Flex vertical align="center" style={{ width: "100%" }}>
+        <Title level={4} style={{ marginBottom: 24, textAlign: "center" }}>
+          Swap
+        </Title>
+        {loading ? (
+          <Row
+            justify="center"
+            align="middle"
+            style={{ height: 200, width: "100%" }}
+          >
+            <Col>
+              <Spin size="large" />
+            </Col>
+          </Row>
+        ) : (
+          <div style={{ width: "100%" }}>{_renderFormSwap()}</div>
+        )}
+      </Flex>
     </Card>
   );
 };

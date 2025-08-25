@@ -1,4 +1,5 @@
 import React from "react";
+import { Row, Col, Typography, Divider } from "antd";
 
 interface WalletRowProps {
   amount: number;
@@ -7,6 +8,8 @@ interface WalletRowProps {
   formattedUsdValue?: string;
 }
 
+const { Text } = Typography;
+
 const WalletRow: React.FC<WalletRowProps> = ({
   amount,
   usdValue,
@@ -14,23 +17,19 @@ const WalletRow: React.FC<WalletRowProps> = ({
   formattedUsdValue,
 }) => {
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "8px",
-        borderBottom: "1px solid #ddd",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      {/* Left side */}
-      <div style={{ fontWeight: 500 }}>{formattedAmount}</div>
-
-      {/* Right side */}
-      <div style={{ color: "gray" }}>
-        {formattedUsdValue ?? `$${usdValue.toFixed(2)}`}
-      </div>
-    </div>
+    <>
+      <Row align="middle" justify="space-between" style={{ padding: "8px 0" }}>
+        <Col>
+          <Text strong>{formattedAmount}</Text>
+        </Col>
+        <Col>
+          <Text type="secondary">
+            {formattedUsdValue ?? `$${usdValue.toFixed(2)}`}
+          </Text>
+        </Col>
+      </Row>
+      <Divider style={{ margin: 0 }} />
+    </>
   );
 };
 
