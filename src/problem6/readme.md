@@ -32,16 +32,16 @@ This document specifies the requirements and architecture for a real-time score 
 - Any user action triggers a score update.
 - Backend validates the action, updates the score in the database, and broadcasts the updated score event.
 
-**Endpoint:**
+**Frontend:**
 ```sh
+User action example
 POST /api/score/update
-Body: { "userId": "12345", "actionId": "xyz-001" }
+Body: { "userId": "12345" }
 ```
 
 **Backend flow:**
 ```sh
 1. Validate JWT token.
-2. Verify `actionId` is unique (to prevent replay attacks).
 3. Update user’s score in DB.
 4. Emit event via Socket.IO to all connected clients.
 ```
@@ -56,7 +56,6 @@ Body: { "userId": "12345", "actionId": "xyz-001" }
 
 ### FR-04: Prevent Unauthorized Score Increase
 - Users must be authenticated with a **valid JWT**.
-- Each action must have a unique ID validated by backend.
 - No direct manipulation of score is allowed from frontend.
 
 ---
@@ -74,13 +73,6 @@ Body: { "userId": "12345", "actionId": "xyz-001" }
 - id (uuid, PK)  
 - username  
 - score (integer, default = 0)  
-
-**Table: actions**  
-- id (uuid, PK)  
-- user_id (FK → users.id)  
-- action_type  
-- is_counted (boolean)  
-- created_at  
 
 ---
 
@@ -114,7 +106,7 @@ flowchart TB
     %% Backend
     D["Backend:<br/>  Receives action"]
     E{{"JWT Validation & Action<br/> Verification"}}
-    F["Update Database (Postgres):<br/>Calculate Score and update<br/> User Table and Action Table"]
+    F["Update Database (Postgres):<br/>Calculate Score and update<br/> User Table"]
     G["Emit via Socket.IO"]
 
     %% Flow
@@ -130,7 +122,7 @@ flowchart TB
 ### POST `/api/score/update`
 ```sh
 Headers: { "Authorization": "Bearer <token>" }
-Body: { "userId": "12345", "actionId": "xyz-001" }
+Body: { "userId": "12345" }
 ```
 
 **Response:**
@@ -180,12 +172,6 @@ socket.on("scoreUpdate", (data) => {
 {
   "status": "error",
   "message": "Invalid token"
-}
-```
-```json
-{
-  "status": "error",
-  "message": "Action already processed"
 }
 ```
 
