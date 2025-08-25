@@ -55,5 +55,5 @@ DB_NAME=resourceDB
 To reset the entire database and reseed sample data from scratch, use:
 
 ```sh
-yarn devops:original:clean-database
+yarn devops:clean
 ```
