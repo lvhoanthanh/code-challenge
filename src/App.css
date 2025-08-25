@@ -1,0 +1,23 @@
+nav {
+  margin: 24px 0;
+  text-align: center;
+}
+
+nav a {
+  color: #1677ff;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+nav a:hover {
+  background: #e6f4ff;
+  color: #0056b3;
+}
+
+nav a.active {
+  background: #1677ff;
+  color: #fff;
+}

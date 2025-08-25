@@ -1,13 +1,25 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
 import Problem2 from "./problem2";
 import Problem3 from "./problem3";
+import "./App.css";
 
 const App = () => {
   return (
     <Router>
       <nav>
-        <Link to="/problem2">Problem 2</Link> |{" "}
-        <Link to="/problem3">Problem 3</Link>
+        <NavLink
+          to="/problem2"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Problem 2
+        </NavLink>
+        {" | "}
+        <NavLink
+          to="/problem3"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          Problem 3
+        </NavLink>
       </nav>
 
       <Routes>
