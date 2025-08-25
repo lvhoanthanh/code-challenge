@@ -6,8 +6,6 @@ import { Card, Typography, Spin, Flex, Row, Col } from "antd";
 
 const { Title } = Typography;
 
-// WalletBalance interface didn’t define blockchain.
-// Add blockchain to the interface.
 interface WalletBalance {
   currency: string;
   amount: number;
@@ -17,17 +15,14 @@ interface FormattedWalletBalance extends WalletBalance {
   formatted: string;
 }
 
-// Remove BoxProps
 interface Props {}
 
 const WalletPage: React.FC<Props> = (props: Props) => {
-  // Remove children
   const { ...rest } = props;
   const balances = useWalletBalances();
   const prices = usePrices();
   const loading = !balances.length || !Object.keys(prices).length;
 
-  // Define priority for each blockchain
   const getPriority = (blockchain: string): number => {
     switch (blockchain) {
       case "Osmosis":
@@ -45,11 +40,6 @@ const WalletPage: React.FC<Props> = (props: Props) => {
     }
   };
 
-  // The filter used lhsPriority, which was never defined.
-  // Filter out balances with invalid priority or amount <= 0.
-  // The sort comparator didn’t return 0 for equal values → unstable sort.
-  // Then sort them by blockchain priority (descending order).
-  // useMemo depended on both balances and prices, even though prices was not used.
   const sortedBalances = useMemo(() => {
     return _.orderBy(
       _.filter(balances, (balance: WalletBalance) => {
@@ -60,16 +50,11 @@ const WalletPage: React.FC<Props> = (props: Props) => {
     );
   }, [balances]);
 
-  // Unused formattedBalances.
-  // Format balances using Intl.NumberFormat
-  // If currency is not ISO-4217 (like BTC, ETH), fallback to custom formatting
   const formattedBalances: FormattedWalletBalance[] = _.map(
     sortedBalances,
     (balance: WalletBalance) => {
       let formatted: string;
-
       try {
-        // Try to format using currency style (works for USD, EUR, JPY, etc.)
         formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: balance.currency,
@@ -77,7 +62,6 @@ const WalletPage: React.FC<Props> = (props: Props) => {
           maximumFractionDigits: 6,
         }).format(balance.amount);
       } catch {
-        // Fallback for crypto (BTC, ETH, etc.)
         formatted =
           new Intl.NumberFormat("en-US", {
             minimumFractionDigits: 2,
@@ -86,7 +70,6 @@ const WalletPage: React.FC<Props> = (props: Props) => {
           " " +
           balance.currency;
       }
-
       return {
         ...balance,
         formatted,
@@ -94,7 +77,6 @@ const WalletPage: React.FC<Props> = (props: Props) => {
     }
   );
 
-  // Render rows for each balance
   const rows = _.map(formattedBalances, (balance, index) => {
     const usdValue = prices[balance.currency] * balance.amount;
     const usdFormatted = new Intl.NumberFormat("en-US", {
@@ -104,32 +86,57 @@ const WalletPage: React.FC<Props> = (props: Props) => {
     }).format(usdValue);
 
     return (
-      <WalletRow
+      <div
         key={index}
-        amount={balance.amount}
-        usdValue={usdValue}
-        formattedAmount={balance.formatted}
-        formattedUsdValue={usdFormatted}
-      />
+        style={{
+          background: index % 2 === 0 ? "#fafafa" : "#fff",
+          borderRadius: 8,
+          marginBottom: 12,
+          boxShadow: "0 1px 2px rgba(0,0,0,0.03)",
+          padding: "12px 20px",
+        }}
+      >
+        <WalletRow
+          amount={balance.amount}
+          usdValue={usdValue}
+          formattedAmount={balance.formatted}
+          formattedUsdValue={usdFormatted}
+        />
+      </div>
     );
   });
-  console.log(loading, 'aaaaaaaaaa')
+
   return (
-    <Card className="max-w-lg mx-auto mt-8 shadow-md rounded-2xl">
-      <Title level={4}>Wallets</Title>
-      {loading ? (
-        <Row
-          justify="center"
-          align="middle"
-          style={{ height: 200 }} // chiều cao để spinner ở giữa Card
-        >
-          <Col>
-            <Spin size="large" />
-          </Col>
-        </Row>
-      ) : (
-        <div {...rest}>{rows}</div>
-      )}
+    <Card
+      style={{
+        maxWidth: 420,
+        margin: "32px auto",
+        padding: "24px 16px",
+        borderRadius: 16,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+      }}
+      bodyStyle={{ padding: 0 }}
+    >
+      <Flex vertical align="center" style={{ width: "100%" }}>
+        <Title level={4} style={{ marginBottom: 24, textAlign: "center" }}>
+          Wallets
+        </Title>
+        {loading ? (
+          <Row
+            justify="center"
+            align="middle"
+            style={{ height: 200, width: "100%" }}
+          >
+            <Col>
+              <Spin size="large" />
+            </Col>
+          </Row>
+        ) : (
+          <div style={{ width: "100%" }} {...rest}>
+            {rows}
+          </div>
+        )}
+      </Flex>
     </Card>
   );
 };
